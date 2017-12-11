@@ -76,7 +76,7 @@ void cGame::initialise(SDL_Window* theSDLWND, SDL_Renderer* theRenderer)
 	theSoundMgr->getSnd("theme")->play(-1);
 
 	// Create text Textures
-	gameTextNames = { "TitleTxt" "How to play",};
+	gameTextNames = { "TitleTxt" ,"How to play"};
 	gameTextList = { "Space Invaders - Game", "Use Keyboard buttons to move and play"};
 	for (int text = 0; text < gameTextNames.size(); text++)
 	{
@@ -91,7 +91,7 @@ void cGame::initialise(SDL_Window* theSDLWND, SDL_Renderer* theRenderer)
 	// Store the textures
 	btnNameList = { "exit_btn", "instructions_btn", "load_btn", "menu_btn", "play_btn", "save_btn" };
 	btnTexturesToUse = { "Images/Buttons/button_exit.png", "Images/Buttons/button_instructions.png", "Images/Buttons/button_load.png", "Images/Buttons/button_menu.png", "Images/Buttons/button_play.png", "Images/Buttons/button_save.png"};
-	btnPos = { { 400, 375 },{ 400, 300 },{ 400, 300 },{ 500, 500 },{ 400, 300 },{ 740, 500 },{ 400, 300 } };
+	btnPos = { { 400, 375 },{ 400, 300 },{ 400, 300 },{ 500, 500 },{ 400, 300 },{ 400, 400 },{ 400, 300 } };
 	for (int bCount = 0; bCount < btnNameList.size(); bCount++)
 	{
 		theTextureMgr->addTexture(btnNameList[bCount], btnTexturesToUse[bCount]);
@@ -118,22 +118,20 @@ void cGame::initialise(SDL_Window* theSDLWND, SDL_Renderer* theRenderer)
 	theRocket.setSpritePos({ 300, 450 });
 	theRocket.setTexture(theTextureMgr->getTexture("theRocket"));
 	theRocket.setSpriteDimensions(theTextureMgr->getTexture("theRocket")->getTWidth(), theTextureMgr->getTexture("theRocket")->getTHeight());
-	theRocket.setRocketVelocity({ 5, 5 });
+	theRocket.setRocketVelocity({ 0, 5 });
 
 	// Create vector array of textures
 
-	for (int astro = 0; astro != 10; astro++)
+	for (int astro = 0; astro < 10; astro++)
 	{
 		theAsteroids.push_back(new cAsteroid);
 		theAsteroids[astro]->setSpritePos({ 100 * (rand() % 5 + 1), 50 * (rand() % 5 + 1) });
-		theAsteroids[astro]->setSpriteTranslation({ (rand() % 8 + 1), (rand() % 8 + 1) });
+		theAsteroids[astro]->setSpriteTranslation({ (5,5 )});
 		int randAsteroid = rand() % 4;
 		theAsteroids[astro]->setTexture(theTextureMgr->getTexture(textureName[randAsteroid]));
 		theAsteroids[astro]->setSpriteDimensions(theTextureMgr->getTexture(textureName[randAsteroid])->getTWidth(), theTextureMgr->getTexture(textureName[randAsteroid])->getTHeight());
-		theAsteroids[astro]->setAsteroidVelocity({ 3, 3 });
+		theAsteroids[astro]->setAsteroidVelocity({ 10, 10 });
 		theAsteroids[astro]->setActive(true);
-		
-		
 	}
 	
 	
@@ -175,23 +173,10 @@ void cGame::render(SDL_Window* theSDLWND, SDL_Renderer* theRenderer)
 
 		// Render Button
 		theButtonMgr->getBtn("play_btn")->render(theRenderer, &theButtonMgr->getBtn("play_btn")->getSpriteDimensions(), &theButtonMgr->getBtn("play_btn")->getSpritePos(), theButtonMgr->getBtn("play_btn")->getSpriteScale());
-		theButtonMgr->getBtn("exit_btn")->setSpritePos({ 400, 375 });
+		theButtonMgr->getBtn("play_btn")->setSpritePos({ 400, 375 });
+		theButtonMgr->getBtn("exit_btn")->setSpritePos({ 400, 475 });
 		theButtonMgr->getBtn("exit_btn")->render(theRenderer, &theButtonMgr->getBtn("exit_btn")->getSpriteDimensions(), &theButtonMgr->getBtn("exit_btn")->getSpritePos(), theButtonMgr->getBtn("exit_btn")->getSpriteScale());
 
-
-		// Render each asteroid in the vector array
-		for (int draw = 0; draw < theAsteroids.size(); draw++)
-		{
-			theAsteroids[draw]->render(theRenderer, &theAsteroids[draw]->getSpriteDimensions(), &theAsteroids[draw]->getSpritePos(), theAsteroids[draw]->getSpriteRotAngle(), &theAsteroids[draw]->getSpriteCentre(), theAsteroids[draw]->getSpriteScale());
-		}
-		// Render each bullet in the vector array
-		for (int draw = 0; draw < theBullets.size(); draw++)
-		{
-			theBullets[draw]->render(theRenderer, &theBullets[draw]->getSpriteDimensions(), &theBullets[draw]->getSpritePos(), theBullets[draw]->getSpriteRotAngle(), &theBullets[draw]->getSpriteCentre(), theBullets[draw]->getSpriteScale());
-		}
-
-		// render the rocket
-		theRocket.render(theRenderer, &theRocket.getSpriteDimensions(), &theRocket.getSpritePos(), theRocket.getSpriteRotAngle(), &theRocket.getSpriteCentre(), theRocket.getSpriteScale());
 		SDL_RenderPresent(theRenderer);
 	}
 	break;
@@ -213,6 +198,21 @@ void cGame::render(SDL_Window* theSDLWND, SDL_Renderer* theRenderer)
 		theButtonMgr->getBtn("load_btn")->render(theRenderer, &theButtonMgr->getBtn("load_btn")->getSpriteDimensions(), &theButtonMgr->getBtn("load_btn")->getSpritePos(), theButtonMgr->getBtn("load_btn")->getSpriteScale());
 		theButtonMgr->getBtn("save_btn")->setSpritePos({ 740, 575 });
 		theButtonMgr->getBtn("save_btn")->render(theRenderer, &theButtonMgr->getBtn("save_btn")->getSpriteDimensions(), &theButtonMgr->getBtn("save_btn")->getSpritePos(), theButtonMgr->getBtn("save_btn")->getSpriteScale());
+
+
+		// Render each asteroid in the vector array
+		for (int draw = 0; draw < theAsteroids.size(); draw++)
+		{
+			theAsteroids[draw]->render(theRenderer, &theAsteroids[draw]->getSpriteDimensions(), &theAsteroids[draw]->getSpritePos(), theAsteroids[draw]->getSpriteRotAngle(), &theAsteroids[draw]->getSpriteCentre(), theAsteroids[draw]->getSpriteScale());
+		}
+		// Render each bullet in the vector array
+		for (int draw = 0; draw < theBullets.size(); draw++)
+		{
+			theBullets[draw]->render(theRenderer, &theBullets[draw]->getSpriteDimensions(), &theBullets[draw]->getSpritePos(), theBullets[draw]->getSpriteRotAngle(), &theBullets[draw]->getSpriteCentre(), theBullets[draw]->getSpriteScale());
+		}
+
+		// render the rocket
+		theRocket.render(theRenderer, &theRocket.getSpriteDimensions(), &theRocket.getSpritePos(), theRocket.getSpriteRotAngle(), &theRocket.getSpriteCentre(), theRocket.getSpriteScale());
 	}
 	break;
 	case END:
@@ -221,7 +221,7 @@ void cGame::render(SDL_Window* theSDLWND, SDL_Renderer* theRenderer)
 		tempTextTexture = theTextureMgr->getTexture("TitleTxt");
 		pos = { 10, 10, tempTextTexture->getTextureRect().w, tempTextTexture->getTextureRect().h };
 		tempTextTexture->renderTexture(theRenderer, tempTextTexture->getTexture(), &tempTextTexture->getTextureRect(), &pos, scale);
-		tempTextTexture = theTextureMgr->getTexture("ThanksTxt");
+		tempTextTexture = theTextureMgr->getTexture("How to play");
 		pos = { 300, 10, tempTextTexture->getTextureRect().w, tempTextTexture->getTextureRect().h };
 		tempTextTexture->renderTexture(theRenderer, tempTextTexture->getTexture(), &tempTextTexture->getTextureRect(), &pos, scale);
 		theButtonMgr->getBtn("menu_btn")->setSpritePos({ 500, 500 });
@@ -279,21 +279,7 @@ void cGame::update(double deltaTime)
 			theGameState = PLAYING;
 			theAreaClicked = { 0, 0 };
 		}
-	}
-	break;
-	case END:
-	{
-		theGameState = theButtonMgr->getBtn("exit_btn")->update(theGameState, QUIT, theAreaClicked);
-		theGameState = theButtonMgr->getBtn("menu_btn")->update(theGameState, MENU, theAreaClicked);
-	}
-	break;
-	case QUIT:
-	{
-	}
-	break;
-	default:
-		break;
-	}
+
 		// Update the visibility and position of each asteriod
 		vector<cAsteroid*>::iterator asteroidIterator = theAsteroids.begin();
 		while (asteroidIterator != theAsteroids.end())
@@ -347,6 +333,22 @@ void cGame::update(double deltaTime)
 		// Update the Rockets position
 		theRocket.update(deltaTime);
 	}
+	break;
+	case END:
+	{
+		theGameState = theButtonMgr->getBtn("exit_btn")->update(theGameState, QUIT, theAreaClicked);
+		theGameState = theButtonMgr->getBtn("menu_btn")->update(theGameState, MENU, theAreaClicked);
+	}
+	break;
+	case QUIT:
+	{
+	}
+	break;
+	default:
+		break;
+	}
+		
+	}
 
 	bool cGame::getInput(bool theLoop)
 	{
@@ -366,6 +368,8 @@ void cGame::update(double deltaTime)
 				{
 				case SDL_BUTTON_LEFT:
 				{
+					theAreaClicked.x = event.motion.x;
+					theAreaClicked.y = event.motion.y;
 				}
 				break;
 				case SDL_BUTTON_RIGHT:
@@ -379,6 +383,8 @@ void cGame::update(double deltaTime)
 				{
 				case SDL_BUTTON_LEFT:
 				{
+					theAreaClicked.x = 0;
+					theAreaClicked.y = 0;
 				}
 				break;
 				case SDL_BUTTON_RIGHT:
@@ -431,7 +437,7 @@ void cGame::update(double deltaTime)
 					theBullets[numBullets]->setSpriteTranslation({ 2, 2 });
 					theBullets[numBullets]->setTexture(theTextureMgr->getTexture("bullet"));
 					theBullets[numBullets]->setSpriteDimensions(theTextureMgr->getTexture("bullet")->getTWidth(), theTextureMgr->getTexture("bullet")->getTHeight());
-					theBullets[numBullets]->setBulletVelocity({ 2, 2 });
+					theBullets[numBullets]->setBulletVelocity({ 5, 5 });
 					theBullets[numBullets]->setSpriteRotAngle(theRocket.getSpriteRotAngle());
 					theBullets[numBullets]->setActive(true);
 					cout << "Bullet added to Vector at position - x: " << theRocket.getBoundingRect().x << " y: " << theRocket.getBoundingRect().y << endl;
