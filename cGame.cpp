@@ -221,7 +221,7 @@ void cGame::render(SDL_Window* theSDLWND, SDL_Renderer* theRenderer)
 	{
 		spriteBkgd.render(theRenderer, NULL, NULL, spriteBkgd.getSpriteScale());
 		tempTextTexture = theTextureMgr->getTexture("TitleTxt");
-		pos = { 10, 10, tempTextTexture->getTextureRect().w, tempTextTexture->getTextureRect().h };
+		pos = { 250, 250, tempTextTexture->getTextureRect().w, tempTextTexture->getTextureRect().h };
 		tempTextTexture->renderTexture(theRenderer, tempTextTexture->getTexture(), &tempTextTexture->getTextureRect(), &pos, scale);
 		
 		theButtonMgr->getBtn("menu_btn")->setSpritePos({ 500, 500 });
@@ -289,6 +289,8 @@ void cGame::update(double deltaTime)
 				theAsteroids[astro]->setAsteroidVelocity({ 10, 10 });
 				theAsteroids[astro]->setActive(true);
 			}
+
+			
 			
 
 		}
