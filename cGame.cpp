@@ -106,7 +106,7 @@ void cGame::initialise(SDL_Window* theSDLWND, SDL_Renderer* theRenderer)
 	}
 	theGameState = MENU;
     theBtnType = EXIT;
-
+	playing = false;
 	
 
 	spriteBkgd.setSpritePos({ 0, 0 });
@@ -120,6 +120,7 @@ void cGame::initialise(SDL_Window* theSDLWND, SDL_Renderer* theRenderer)
 	theRocket.setSpriteDimensions(theTextureMgr->getTexture("theRocket")->getTWidth(), theTextureMgr->getTexture("theRocket")->getTHeight());
 	theRocket.setRocketVelocity({ 0, 5 });
 
+	/*
 	// Create vector array of textures
 
 	for (int astro = 0; astro < 10; astro++)
@@ -132,7 +133,7 @@ void cGame::initialise(SDL_Window* theSDLWND, SDL_Renderer* theRenderer)
 		theAsteroids[astro]->setSpriteDimensions(theTextureMgr->getTexture(textureName[randAsteroid])->getTWidth(), theTextureMgr->getTexture(textureName[randAsteroid])->getTHeight());
 		theAsteroids[astro]->setAsteroidVelocity({ 10, 10 });
 		theAsteroids[astro]->setActive(true);
-	}
+	}*/
 	
 	
 
@@ -262,10 +263,35 @@ void cGame::update(double deltaTime)
 	{
 		theGameState = theButtonMgr->getBtn("exit_btn")->update(theGameState, QUIT, theAreaClicked);
 		theGameState = theButtonMgr->getBtn("play_btn")->update(theGameState, PLAYING, theAreaClicked);
+		playing = false;
 	}
 	break;
 	case PLAYING:
 	{
+		if (!playing)
+		{
+			playing = true;
+			theRocket.setSpritePos({ 300, 450 });
+			theRocket.setTexture(theTextureMgr->getTexture("theRocket"));
+			theRocket.setSpriteDimensions(theTextureMgr->getTexture("theRocket")->getTWidth(), theTextureMgr->getTexture("theRocket")->getTHeight());
+			theRocket.setRocketVelocity({ 0, 5 });
+
+			// Create vector array of textures
+
+			for (int astro = 0; astro < 10; astro++)
+			{
+				theAsteroids.push_back(new cAsteroid);
+				theAsteroids[astro]->setSpritePos({ 100 * (rand() % 5 + 1), 50 * (rand() % 5 + 1) });
+				theAsteroids[astro]->setSpriteTranslation({ (5,5) });
+				int randAsteroid = rand() % 4;
+				theAsteroids[astro]->setTexture(theTextureMgr->getTexture(textureName[randAsteroid]));
+				theAsteroids[astro]->setSpriteDimensions(theTextureMgr->getTexture(textureName[randAsteroid])->getTWidth(), theTextureMgr->getTexture(textureName[randAsteroid])->getTHeight());
+				theAsteroids[astro]->setAsteroidVelocity({ 10, 10 });
+				theAsteroids[astro]->setActive(true);
+			}
+			
+
+		}
 		theGameState = theButtonMgr->getBtn("exit_btn")->update(theGameState, END, theAreaClicked);
 		theGameState = theButtonMgr->getBtn("load_btn")->update(theGameState, LOADMAP, theAreaClicked);
 		if (theGameState == LOADMAP)
@@ -339,6 +365,8 @@ void cGame::update(double deltaTime)
 		break;
 	case END:
 	{
+		playing = false;
+		theAsteroids.clear();
 		theGameState = theButtonMgr->getBtn("exit_btn")->update(theGameState, QUIT, theAreaClicked);
 		theGameState = theButtonMgr->getBtn("replay_button")->update(theGameState, PLAYING, theAreaClicked);
 		if (theGameState == REPEAT)
@@ -446,9 +474,10 @@ void cGame::update(double deltaTime)
 					int numBullets = theBullets.size() - 1;
 					theBullets[numBullets]->setSpritePos({ theRocket.getBoundingRect().x + theRocket.getSpriteCentre().x, theRocket.getBoundingRect().y + theRocket.getSpriteCentre().y });
 					theBullets[numBullets]->setSpriteTranslation({ 2, 2 });
+
 					theBullets[numBullets]->setTexture(theTextureMgr->getTexture("bullet"));
 					theBullets[numBullets]->setSpriteDimensions(theTextureMgr->getTexture("bullet")->getTWidth(), theTextureMgr->getTexture("bullet")->getTHeight());
-					theBullets[numBullets]->setBulletVelocity({ 5, 5 });
+					theBullets[numBullets]->setBulletVelocity({ 10, 10 });
 					theBullets[numBullets]->setSpriteRotAngle(theRocket.getSpriteRotAngle());
 					theBullets[numBullets]->setActive(true);
 					cout << "Bullet added to Vector at position - x: " << theRocket.getBoundingRect().x << " y: " << theRocket.getBoundingRect().y << endl;
