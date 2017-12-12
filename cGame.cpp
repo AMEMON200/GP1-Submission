@@ -89,9 +89,9 @@ void cGame::initialise(SDL_Window* theSDLWND, SDL_Renderer* theRenderer)
 	theTextureMgr->addTexture("Title", theFontMgr->getFont("Anke Print")->createTextTexture(theRenderer, gameTextList[0], SOLID, { 0, 255, 0, 255 }, { 0, 0, 0, 0 }));
 
 	// Store the textures
-	btnNameList = { "exit_btn", "instructions_btn", "load_btn", "menu_btn", "play_btn", "save_btn" };
-	btnTexturesToUse = { "Images/Buttons/button_exit.png", "Images/Buttons/button_instructions.png", "Images/Buttons/button_load.png", "Images/Buttons/button_menu.png", "Images/Buttons/button_play.png", "Images/Buttons/button_save.png"};
-	btnPos = { { 400, 375 },{ 400, 300 },{ 400, 300 },{ 500, 500 },{ 400, 300 },{ 400, 400 },{ 400, 300 } };
+	btnNameList = { "exit_btn", "instructions_btn", "load_btn", "menu_btn", "play_btn", "save_btn" , "replay_button"};
+	btnTexturesToUse = { "Images/Buttons/button_exit.png", "Images/Buttons/button_instructions.png", "Images/Buttons/button_load.png", "Images/Buttons/button_menu.png", "Images/Buttons/button_play.png", "Images/Buttons/button_save.png" , "Images/Buttons/replay_button.png"};
+	btnPos = { { 400, 375 },{ 400, 300 },{ 400, 300 },{ 500, 500 },{ 400, 300 },{ 400, 400 },{ 400, 300 },{400,340 } };
 	for (int bCount = 0; bCount < btnNameList.size(); bCount++)
 	{
 		theTextureMgr->addTexture(btnNameList[bCount], btnTexturesToUse[bCount]);
@@ -105,7 +105,7 @@ void cGame::initialise(SDL_Window* theSDLWND, SDL_Renderer* theRenderer)
 		theButtonMgr->add(btnNameList[bCount], newBtn);
 	}
 	theGameState = MENU;
-	theBtnType = EXIT;
+    theBtnType = EXIT;
 
 	
 
@@ -141,7 +141,7 @@ void cGame::initialise(SDL_Window* theSDLWND, SDL_Renderer* theRenderer)
 
 void cGame::run(SDL_Window* theSDLWND, SDL_Renderer* theRenderer)
 {
-	bool loop = true;
+	loop = true;
 
 	while (loop)
 	{
@@ -192,11 +192,12 @@ void cGame::render(SDL_Window* theSDLWND, SDL_Renderer* theRenderer)
 		pos = { 30, 10, tempTextTexture->getTextureRect().w, tempTextTexture->getTextureRect().h };
 		tempTextTexture->renderTexture(theRenderer, tempTextTexture->getTexture(), &tempTextTexture->getTextureRect(), &pos, scale);
 
-		theButtonMgr->getBtn("exit_btn")->setSpritePos({ 740, 650 });
+		theButtonMgr->getBtn("exit_btn")->setSpritePos({ 900, 650 });
 		theButtonMgr->getBtn("exit_btn")->render(theRenderer, &theButtonMgr->getBtn("exit_btn")->getSpriteDimensions(), &theButtonMgr->getBtn("exit_btn")->getSpritePos(), theButtonMgr->getBtn("exit_btn")->getSpriteScale());
-		theButtonMgr->getBtn("load_btn")->setSpritePos({ 740, 500 });
+		
+		theButtonMgr->getBtn("load_btn")->setSpritePos({ 900, 500 });
 		theButtonMgr->getBtn("load_btn")->render(theRenderer, &theButtonMgr->getBtn("load_btn")->getSpriteDimensions(), &theButtonMgr->getBtn("load_btn")->getSpritePos(), theButtonMgr->getBtn("load_btn")->getSpriteScale());
-		theButtonMgr->getBtn("save_btn")->setSpritePos({ 740, 575 });
+		theButtonMgr->getBtn("save_btn")->setSpritePos({ 900, 575 });
 		theButtonMgr->getBtn("save_btn")->render(theRenderer, &theButtonMgr->getBtn("save_btn")->getSpriteDimensions(), &theButtonMgr->getBtn("save_btn")->getSpritePos(), theButtonMgr->getBtn("save_btn")->getSpriteScale());
 
 
@@ -221,11 +222,11 @@ void cGame::render(SDL_Window* theSDLWND, SDL_Renderer* theRenderer)
 		tempTextTexture = theTextureMgr->getTexture("TitleTxt");
 		pos = { 10, 10, tempTextTexture->getTextureRect().w, tempTextTexture->getTextureRect().h };
 		tempTextTexture->renderTexture(theRenderer, tempTextTexture->getTexture(), &tempTextTexture->getTextureRect(), &pos, scale);
-		tempTextTexture = theTextureMgr->getTexture("How to play");
-		pos = { 300, 10, tempTextTexture->getTextureRect().w, tempTextTexture->getTextureRect().h };
-		tempTextTexture->renderTexture(theRenderer, tempTextTexture->getTexture(), &tempTextTexture->getTextureRect(), &pos, scale);
+		
 		theButtonMgr->getBtn("menu_btn")->setSpritePos({ 500, 500 });
 		theButtonMgr->getBtn("menu_btn")->render(theRenderer, &theButtonMgr->getBtn("menu_btn")->getSpriteDimensions(), &theButtonMgr->getBtn("menu_btn")->getSpritePos(), theButtonMgr->getBtn("menu_btn")->getSpriteScale());
+		theButtonMgr->getBtn("replay_button")->setSpritePos({ 900, 400 });
+		theButtonMgr->getBtn("replay_button")->render(theRenderer, &theButtonMgr->getBtn("replay_button")->getSpriteDimensions(), &theButtonMgr->getBtn("replay_button")->getSpritePos(), theButtonMgr->getBtn("replay_button")->getSpriteScale());
 		theButtonMgr->getBtn("exit_btn")->setSpritePos({ 500, 575 });
 		theButtonMgr->getBtn("exit_btn")->render(theRenderer, &theButtonMgr->getBtn("exit_btn")->getSpriteDimensions(), &theButtonMgr->getBtn("exit_btn")->getSpritePos(), theButtonMgr->getBtn("exit_btn")->getSpriteScale());
 	}
@@ -279,76 +280,86 @@ void cGame::update(double deltaTime)
 			theGameState = PLAYING;
 			theAreaClicked = { 0, 0 };
 		}
+		{
+			
 
-		// Update the visibility and position of each asteriod
-		vector<cAsteroid*>::iterator asteroidIterator = theAsteroids.begin();
-		while (asteroidIterator != theAsteroids.end())
-		{
-			if ((*asteroidIterator)->isActive() == false)
+			// Update the visibility and position of each asteriod
+			vector<cAsteroid*>::iterator asteroidIterator = theAsteroids.begin();
+			while (asteroidIterator != theAsteroids.end())
 			{
-				asteroidIterator = theAsteroids.erase(asteroidIterator);
-			}
-			else
-			{
-				(*asteroidIterator)->update(deltaTime);
-				++asteroidIterator;
-			}
-		}
-		// Update the visibility and position of each bullet
-		vector<cBullet*>::iterator bulletIterartor = theBullets.begin();
-		while (bulletIterartor != theBullets.end())
-		{
-			if ((*bulletIterartor)->isActive() == false)
-			{
-				bulletIterartor = theBullets.erase(bulletIterartor);
-			}
-			else
-			{
-				(*bulletIterartor)->update(deltaTime);
-				++bulletIterartor;
-			}
-		}
-		/*
-		==============================================================
-		| Check for collisions
-		==============================================================
-		*/
-		for (vector<cBullet*>::iterator bulletIterartor = theBullets.begin(); bulletIterartor != theBullets.end(); ++bulletIterartor)
-		{
-			//(*bulletIterartor)->update(deltaTime);
-			for (vector<cAsteroid*>::iterator asteroidIterator = theAsteroids.begin(); asteroidIterator != theAsteroids.end(); ++asteroidIterator)
-			{
-				if ((*asteroidIterator)->collidedWith(&(*asteroidIterator)->getBoundingRect(), &(*bulletIterartor)->getBoundingRect()))
+				if ((*asteroidIterator)->isActive() == false)
 				{
-					// if a collision set the bullet and asteroid to false
-					(*asteroidIterator)->setActive(false);
-					(*bulletIterartor)->setActive(false);
-					theSoundMgr->getSnd("bang")->play(0);
+					asteroidIterator = theAsteroids.erase(asteroidIterator);
 				}
-
+				else
+				{
+					(*asteroidIterator)->update(deltaTime);
+					++asteroidIterator;
+				}
 			}
+			// Update the visibility and position of each bullet
+			vector<cBullet*>::iterator bulletIterartor = theBullets.begin();
+			while (bulletIterartor != theBullets.end())
+			{
+				if ((*bulletIterartor)->isActive() == false)
+				{
+					bulletIterartor = theBullets.erase(bulletIterartor);
+				}
+				else
+				{
+					(*bulletIterartor)->update(deltaTime);
+					++bulletIterartor;
+				}
+			}
+			/*
+			==============================================================
+			| Check for collisions
+			==============================================================
+			*/
+			for (vector<cBullet*>::iterator bulletIterartor = theBullets.begin(); bulletIterartor != theBullets.end(); ++bulletIterartor)
+			{
+				//(*bulletIterartor)->update(deltaTime);
+				for (vector<cAsteroid*>::iterator asteroidIterator = theAsteroids.begin(); asteroidIterator != theAsteroids.end(); ++asteroidIterator)
+				{
+					if ((*asteroidIterator)->collidedWith(&(*asteroidIterator)->getBoundingRect(), &(*bulletIterartor)->getBoundingRect()))
+					{
+						// if a collision set the bullet and asteroid to false
+						(*asteroidIterator)->setActive(false);
+						(*bulletIterartor)->setActive(false);
+						theSoundMgr->getSnd("bang")->play(0);
+					}
+
+				}
+			}
+
+
+			// Update the Rockets position
+			theRocket.update(deltaTime);
 		}
-
-
-		// Update the Rockets position
-		theRocket.update(deltaTime);
-	}
-	break;
+		break;
 	case END:
 	{
 		theGameState = theButtonMgr->getBtn("exit_btn")->update(theGameState, QUIT, theAreaClicked);
+		theGameState = theButtonMgr->getBtn("replay_button")->update(theGameState, PLAYING, theAreaClicked);
+		if (theGameState == REPEAT)
+		{
+			theGameState = PLAYING;
+			theAreaClicked = { 0, 0 };
+		}
 		theGameState = theButtonMgr->getBtn("menu_btn")->update(theGameState, MENU, theAreaClicked);
 	}
 	break;
 	case QUIT:
 	{
+		loop = false;
 	}
 	break;
 	default:
 		break;
 	}
-		
+
 	}
+}
 
 	bool cGame::getInput(bool theLoop)
 	{
